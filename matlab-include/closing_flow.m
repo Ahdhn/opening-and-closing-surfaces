@@ -69,8 +69,7 @@ recompute = true;
 iter = 0;
 data.active_num = 0;
 while iter<maxiter
-    
-    disp(['iter: ', num2str(iter)]);
+        
     
     Vprev = Vfull;
     Fprev = Ffull;
