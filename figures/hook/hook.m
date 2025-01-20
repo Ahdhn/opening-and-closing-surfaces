@@ -5,10 +5,16 @@ V = V./(max(max(V)));
 h = 0.004;
 bd = 1/.02;
 dt = .01;
-writeOBJ('hook-input.obj',V,F)
+writeOBJ('hook-input.obj',V,F);
+
+tStart = tic;
 [U,G] = closing_flow(V,F,'Bound',bd,'EdgeLength',h,'TimeStep',dt,...
-    'MaxIter',90,'RemeshIterations',1,'Debug',false,'Plot',true,'Write',false);
-writeOBJ('hook-output.obj',U,G)
+    'MaxIter',20,'RemeshIterations',1,'Debug',false,'Plot',false,'Write',false);
+tStop = toc(tStart);
+
+disp(['closing_flow time: ', num2str(tStop), ' seconds']);
+
+writeOBJ('hook-output.obj',U,G);
 
 
 
@@ -17,7 +23,7 @@ writeOBJ('hook-output.obj',U,G)
 % moving part highlighted, we'll do the following to separate the output
 % into an "active" part and an "inactive" one. We then render them as in
 % ../../render/render-template.blend
-
+%{
 clc; clear all; close all;
 [Vgt,Fgt] = readOBJ('hook_input.obj');
 [V,F] = read_triangle_mesh('hook_output.obj');
@@ -40,4 +46,4 @@ drawnow
 %pause
 writeOBJ('hook_active.obj',v_active,f_active);
 writeOBJ('hook_inactive.obj',v_inactive,f_inactive);
-
+%}

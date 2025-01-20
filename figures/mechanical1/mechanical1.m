@@ -7,15 +7,20 @@ bd = 1/.07;
 dt = 0.001;
 
 writeOBJ('mechanical1_input.obj',V,F);
+tStart = tic;
 [U,G] = closing_flow(V,F,'Bound',bd,'EdgeLength',h,'TimeStep',dt,...
-    'MaxIter',100,'RemeshIterations',1,'Debug',false,'Plot',true,'Write',false);
+    'MaxIter',20,'RemeshIterations',1,'Debug',false,'Plot',false,'Write',false);
+tStop = toc(tStart);
+
+disp(['closing_flow time: ', num2str(tStop), ' seconds']);
+
 writeOBJ('mechanical1_output.obj',U,G);
 
 % We've already saved input and output. In order to render them with the
 % moving part highlighted, we'll do the following to separate the output
 % into an "active" part and an "inactive" one. We then render them as in
 % ../../render/render-template.blend
-
+%{
 clc; clear all; close all;
 [Vgt,Fgt] = readOBJ('mechanical1_input.obj');
 [V,F] = read_triangle_mesh('mechanical1_output.obj');
@@ -38,3 +43,4 @@ drawnow
 %pause
 writeOBJ('mechanical1_active.obj',v_active,f_active);
 writeOBJ('mechanical1_inactive.obj',v_inactive,f_inactive);
+%}

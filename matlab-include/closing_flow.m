@@ -31,6 +31,7 @@ fixed_function = @(V) [];
 %closing = true;
 tol = 1e-7;
 
+remesh_time = 0;
 % ASSIGNED:
 params_to_variables = containers.Map({'EdgeLength','TimeStep','Bound','MaxIter',...
     'RemeshIterations','Debug','Plot','Write','SelfIntersect',...
@@ -69,6 +70,7 @@ iter = 0;
 data.active_num = 0;
 while iter<maxiter
     
+    disp(['iter: ', num2str(iter)]);
     
     Vprev = Vfull;
     Fprev = Ffull;
@@ -201,8 +203,11 @@ while iter<maxiter
     uu = min_quad_with_fixed(.5*real(Q),real(linear),fixed_xyz,v_xyz(fixed_xyz));
     U = [uu(1:size(V,1)),uu(size(V,1)+1:2*size(V,1)),...
         uu(2*size(V,1)+1:3*size(V,1))];
-    %V = V + dot((U-V),per_vertex_normals(V,F),2).*per_vertex_normals(V,F);
-        [U,F] = remesh_botsch_mex(U,F,fixed,h.*ones(size(U,1),1),remesh_iterations);
+    %V = V + dot((U-V),per_vertex_normals(V,F),2).*per_vertex_normals(V,F);    
+    t_start = tic;
+    [U,F] = remesh_botsch_mex(U,F,fixed,h.*ones(size(U,1),1),remesh_iterations);    
+    t_stop = toc(t_start);
+    remesh_time = remesh_time + t_stop;
     
     
     
@@ -325,14 +330,15 @@ while iter<maxiter
     end
     %disp(iter)
     iter = iter + 1;
-    if mod(iter,10)==0
-        dist = max(point_mesh_squared_distance(Vfull,Vprev,Fprev));
-        if dist<tol
-            disp('converged')
-            break
-        end
-        disp(dist)
-    end
+    %if mod(iter,10)==0
+        %dist = max(point_mesh_squared_distance(Vfull,Vprev,Fprev));
+        %dist = 0;
+        %if dist<tol
+        %    disp('converged')
+        %    break
+        %end
+    %    disp(dist)
+    %send
 end
 
 data.active_num = data.active_num /iter;
@@ -341,6 +347,7 @@ data.active_num = data.active_num /iter;
 U = Vfull;
 G = Ffull;
 
+disp(['remeshing time: ', num2str(remesh_time), ' seconds']);
 
 
 end

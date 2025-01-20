@@ -10,16 +10,22 @@ bd = 1/.3;
 is_active = [];
 dt = 0.01;
 writeOBJ('godzilla_input.obj',V,F); % save input
+tStart = tic;
 [U,G] = closing_flow(V,F,'Bound',bd,'EdgeLength',h,'TimeStep',dt,...
-    'MaxIter',30000,'RemeshIterations',10,'Debug',false,'Plot',true,...
+    'MaxIter',20,'RemeshIterations',10,'Debug',false,'Plot',false,...
     'Write',false); % run method
+
+tStop = toc(tStart);
+
+disp(['closing_flow time: ', num2str(tStop), ' seconds']);
+
 writeOBJ('godzilla_output.obj',U,G); % save output
 
 % We've already saved input and output. In order to render them with the
 % moving part highlighted, we'll do the following to separate the output
 % into an "active" part and an "inactive" one. We then render them as in
 % ../../render/render-template.blend
-
+%{
 clc; clear all; close all;
 [Vgt,Fgt] = readOBJ('godzilla_input.obj');
 [V,F] = read_triangle_mesh('godzilla_output.obj');
@@ -42,3 +48,4 @@ drawnow
 %pause
 writeOBJ('godzilla_active.obj',v_active,f_active);
 writeOBJ('godzilla_inactive.obj',v_inactive,f_inactive);
+%}

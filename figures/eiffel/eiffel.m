@@ -10,8 +10,13 @@ h = 0.005;
 bd = 1/.03;
 dt = 0.001;
 writeOBJ('eiffel_input.obj',V,F);
+tStart = tic;
 [U,G] = closing_flow(V,F,'Bound',bd,'EdgeLength',h,'TimeStep',dt,...
-    'MaxIter',120,'RemeshIterations',2,'Debug',false,'Plot',true,'Write',false);
+    'MaxIter',20,'RemeshIterations',2,'Debug',false,'Plot',false,'Write',false);
+tStop = toc(tStart);
+
+disp(['closing_flow time: ', num2str(tStop), ' seconds']);
+
 writeOBJ('eiffel_output.obj',U,G);
 
 
@@ -20,7 +25,7 @@ writeOBJ('eiffel_output.obj',U,G);
 % moving part highlighted, we'll do the following to separate the output
 % into an "active" part and an "inactive" one. We then render them as in
 % ../../render/render-template.blend
-
+%{
 clc; clear all; close all;
 [Vgt,Fgt] = readOBJ('eiffel_input.obj');
 [V,F] = read_triangle_mesh('eiffel_output.obj');
@@ -43,3 +48,4 @@ drawnow
 %pause
 writeOBJ('eiffel_active.obj',v_active,f_active);
 writeOBJ('eiffel_inactive.obj',v_inactive,f_inactive);
+%}

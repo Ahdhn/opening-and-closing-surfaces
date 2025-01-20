@@ -17,16 +17,21 @@ fixed_function = @(V) find((normrow(V(:,1:2)-[0.04,0.12])<0.02) + ...
     (normrow(V(:,1:2)-[0.88,0.04])<0.02) + ...
     (normrow(V(:,1:2)-[0.88,0.20])<0.02));
 writeOBJ('handle_input.obj',V,F); % write input
+tStart = tic;
 [U,G] = closing_flow(V,F,'Bound',bd,'EdgeLength',h,'TimeStep',dt,...
-    'MaxIter',300,'RemeshIterations',1,'Debug',false,'Plot',true,...
+    'MaxIter',20,'RemeshIterations',1,'Debug',false,'Plot',false,...
     'Write',false,'FixedFunction',fixed_function); % run method
+tStop = toc(tStart);
+
+disp(['closing_flow time: ', num2str(tStop), ' seconds']);
+
 writeOBJ('handle_output.obj',U,G); % write output
 
 % We've already saved input and output. In order to render them with the
 % moving part highlighted, we'll do the following to separate the output
 % into an "active" part and an "inactive" one. We then render them as in
 % ../../render/render-template.blend
-
+%{
 clc; clear all; close all;
 [Vgt,Fgt] = readOBJ('handle_input.obj');
 [V,F] = read_triangle_mesh('handle_output.obj');
@@ -49,3 +54,4 @@ drawnow
 %pause
 writeOBJ('handle_active.obj',v_active,f_active);
 writeOBJ('handle_inactive.obj',v_inactive,f_inactive);
+%}

@@ -13,16 +13,21 @@ bd = 1/.015;
 dt = 0.001;
 % Parameters set
 writeOBJ('fandisk_input.obj',V,F) % write input
+tStart = tic;
 [U,G] = closing_flow(V,F,'Bound',bd,'EdgeLength',h,'TimeStep',dt,...
-    'MaxIter',300,'RemeshIterations',1,'Debug',false,'Plot',true,...
+    'MaxIter',20,'RemeshIterations',1,'Debug',false,'Plot',false,...
     'Write',false,'Opening',false);
+tStop = toc(tStart);
+
+disp(['closing_flow time: ', num2str(tStop), ' seconds']);
+
 writeOBJ('fandisk_output.obj',U,G)% write output
 
 % We've already saved input and output. In order to render them with the
 % moving part highlighted, we'll do the following to separate the output
 % into an "active" part and an "inactive" one. We then render them as in
 % ../../render/render-template.blend
-
+%{
 clc; clear all; close all;
 [Vgt,Fgt] = readOBJ('fandisk_input.obj');
 [V,F] = read_triangle_mesh('fandisk_output.obj');
@@ -45,3 +50,4 @@ drawnow
 %pause
 writeOBJ('fandisk_active.obj',v_active,f_active);
 writeOBJ('fandisk_inactive.obj',v_inactive,f_inactive);
+%}
